@@ -1,0 +1,39 @@
+name: Build and release PDF Studio Pro
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: studio-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned direct dependencies
+        run: npm install --ignore-scripts
+      - name: Validate export engines
+        run: npm test
+      - name: Build offline ZIP
+        run: npm run build
+      - name: Publish new version and update manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          gh release create "v$VERSION" ".release/pdf-studio-pro-$VERSION.zip" ".release/studio-update.json" --title "PDF Studio Pro $VERSION" --notes "Local PDF and Office workspace. Read README for capability and validation limits."
+          mkdir -p updates
+          cp .release/studio-update.json updates/studio-update.json
+          cp ".release/pdf-studio-pro-$VERSION.zip" "updates/pdf-studio-pro-$VERSION.zip"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add updates/
+          git commit -m "Publish update manifest for $VERSION"
+          git push origin HEAD:main
