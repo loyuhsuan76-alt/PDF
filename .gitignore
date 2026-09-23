@@ -1,0 +1,7 @@
+node_modules/
+vendor/
+dist/
+.release/
+*.studio.json
+*.pdsenc
+studio-diagnostics.json

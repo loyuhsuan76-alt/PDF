@@ -1,0 +1,18 @@
+{
+  "name": "pdf-studio-pro",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Local PDF and basic Office document workspace",
+  "scripts": {
+    "test": "node selftest.cjs",
+    "build": "node build.cjs"
+  },
+  "dependencies": {
+    "jszip": "3.10.1",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "5.6.205",
+    "pptxgenjs": "4.0.1",
+    "tesseract.js": "7.0.0"
+  },
+  "engines": { "node": ">=22" }
+}
